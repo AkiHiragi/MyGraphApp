@@ -1,16 +1,27 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import './App.css';
-import GraphForm from './components/GraphForm';
-import GraphChart from './components/GraphChart';
-import { calculateGraph, GraphRequest, GraphPoint } from './services/api';
+import MultiGraphForm from './components/MultiGraphForm';
+import MultiGraphChart from './components/GraphChart';
+import {calculateGraph, GraphRequest, GraphData} from './services/api';
 
 function App() {
-    const [points, setPoints] = useState<GraphPoint[]>([]);
+    const [graphs, setGraphs] = useState<GraphData[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [currentFunction, setCurrentFunction] = useState<string>('');
 
-    const handleFormSubmit = async (request: GraphRequest) => {
+    // Цвета для графиков
+    const colors = [
+        'rgb(102, 126, 234)',
+        'rgb(220, 53, 69)',
+        'rgb(40, 167, 69)',
+        'rgb(255, 193, 7)',
+        'rgb(111, 66, 193)',
+        'rgb(23, 162, 184)',
+        'rgb(253, 126, 20)',
+        'rgb(108, 117, 125)'
+    ];
+
+    const handleAddGraph = async (request: GraphRequest) => {
         setLoading(true);
         setError(null);
 
@@ -18,8 +29,15 @@ function App() {
             const response = await calculateGraph(request);
 
             if (response.success) {
-                setPoints(response.points);
-                setCurrentFunction(request.function);
+                const newGraph: GraphData = {
+                    id: Date.now().toString(),
+                    function: request.function,
+                    points: response.points,
+                    color: colors[graphs.length % colors.length],
+                    visible: true
+                };
+
+                setGraphs(prev => [...prev, newGraph]);
             } else {
                 setError(response.error || 'Ошибка при вычислении графика');
             }
@@ -30,55 +48,101 @@ function App() {
         }
     };
 
+    const handleRemoveGraph = (id: string) => {
+        setGraphs(prev => prev.filter(g => g.id !== id));
+    };
+
+    const handleToggleGraph = (id: string) => {
+        setGraphs(prev => prev.map(g =>
+            g.id === id ? {...g, visible: !g.visible} : g
+        ));
+    };
+
+    const clearAllGraphs = () => {
+        setGraphs([]);
+        setError(null);
+    };
+
     return (
         <div className="App">
             <header className="App-header">
-                <h1>График функций</h1>
-                <p>Введите математическую функцию для построения графика</p>
+                <h1>📊 График функций</h1>
+                <p>Создавайте и сравнивайте графики математических функций</p>
             </header>
 
-            <main style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-                <GraphForm onSubmit={handleFormSubmit} loading={loading} />
+            <main className="main-container">
+                <div className="form-container">
+                    <MultiGraphForm
+                        onAddGraph={handleAddGraph}
+                        onRemoveGraph={handleRemoveGraph}
+                        onToggleGraph={handleToggleGraph}
+                        graphs={graphs}
+                        loading={loading}
+                    />
+
+                    {graphs.length > 0 && (
+                        <div style={{marginTop: '1rem', textAlign: 'center'}}>
+                            <button
+                                onClick={clearAllGraphs}
+                                style={{
+                                    padding: '0.5rem 1rem',
+                                    background: 'rgba(220, 53, 69, 0.1)',
+                                    border: '1px solid rgba(220, 53, 69, 0.3)',
+                                    borderRadius: '6px',
+                                    color: '#dc3545',
+                                    cursor: 'pointer',
+                                    fontSize: '0.9rem'
+                                }}
+                            >
+                                🗑️ Очистить все графики
+                            </button>
+                        </div>
+                    )}
+                </div>
 
                 {error && (
-                    <div style={{
-                        color: 'red',
-                        backgroundColor: '#ffe6e6',
-                        padding: '10px',
-                        borderRadius: '4px',
-                        marginBottom: '20px'
-                    }}>
-                        Ошибка: {error}
+                    <div className="error-message">
+                        <strong>Ошибка:</strong> {error}
                     </div>
                 )}
 
-                {points.length > 0 && !loading && (
-                    <div style={{ marginTop: '20px' }}>
-                        <GraphChart points={points} functionName={currentFunction} />
-                        <p style={{ marginTop: '10px', color: '#666' }}>
-                            Построено {points.length} точек для функции: {currentFunction}
-                        </p>
+                {graphs.length > 0 && (
+                    <div className="chart-container">
+                        <MultiGraphChart graphs={graphs}/>
                     </div>
                 )}
 
                 {loading && (
-                    <div style={{ textAlign: 'center', padding: '20px' }}>
+                    <div className="loading-container">
+                        <div className="loading-spinner"></div>
                         <p>Вычисляем график...</p>
                     </div>
                 )}
-            </main>
 
-            <footer style={{ marginTop: '40px', padding: '20px', backgroundColor: '#f8f9fa' }}>
-                <h3>Примеры функций:</h3>
-                <ul style={{ textAlign: 'left', maxWidth: '600px', margin: '0 auto' }}>
-                    <li><code>x^2</code> - парабола</li>
-                    <li><code>sin(x)</code> - синус</li>
-                    <li><code>cos(x)</code> - косинус</li>
-                    <li><code>2*x + 3</code> - прямая линия</li>
-                    <li><code>sqrt(x)</code> - квадратный корень</li>
-                    <li><code>x^3 - 2*x</code> - кубическая функция</li>
-                </ul>
-            </footer>
+                <div className="examples-section">
+                    <h3>🧮 Примеры функций</h3>
+                    <ul className="examples-grid">
+                        <li className="example-item">
+                            <span className="example-code">x^2</span> - парабола
+                        </li>
+                        <li className="example-item">
+                            <span className="example-code">sin(x)</span> - синус
+                        </li>
+                        <li className="example-item">
+                            <span className="example-code">cos(x)</span> - косинус
+                        </li>
+                        <li className="example-item">
+                            <span className="example-code">2*x + 3</span> - прямая линия
+                        </li>
+                        <li className="example-item">
+                            <span className="example-code">sqrt(x)</span> - квадратный корень
+                        </li>
+                        <li className="example-item">
+                            <span className="example-code">x^3 - 2*x</span> - кубическая функция
+                        </li>
+                    </ul>
+                </div>
+            </main>
         </div>
     );
 }

@@ -1,0 +1,130 @@
+.points-info {
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: #667eea;
+    text-align: center;
+}
+
+.points-info small {
+    color: #666;
+    font-size: 0.75rem;
+}
+
+.quick-functions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.quick-function-btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+    background: rgba(102, 126, 234, 0.1);
+    border: 1px solid rgba(102, 126, 234, 0.3);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #667eea;
+    font-weight: 500;
+}
+
+.quick-function-btn:hover {
+    background: rgba(102, 126, 234, 0.2);
+    transform: translateY(-1px);
+}
+
+.submit-button-loading {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s linear infinite;
+    margin-right: 0.5rem;
+}
+
+.invisible-label {
+    opacity: 0;
+}
+
+/* Стили для списка графиков */
+.graphs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.graph-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    background: rgba(102, 126, 234, 0.05);
+    border-radius: 8px;
+    border-left: 4px solid transparent;
+}
+
+.graph-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+}
+
+.graph-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.graph-function {
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    color: #333;
+}
+
+.graph-points {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.graph-controls {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.toggle-btn, .remove-btn {
+    padding: 0.25rem 0.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.toggle-btn {
+    background: rgba(102, 126, 234, 0.1);
+}
+
+.toggle-btn:hover {
+    background: rgba(102, 126, 234, 0.2);
+}
+
+.toggle-btn.hidden {
+    opacity: 0.5;
+}
+
+.remove-btn {
+    background: rgba(220, 53, 69, 0.1);
+}
+
+.remove-btn:hover {
+    background: rgba(220, 53, 69, 0.2);
+}

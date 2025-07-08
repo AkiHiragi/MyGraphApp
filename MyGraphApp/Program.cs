@@ -25,20 +25,21 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-
+    
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Graph API V1");
-        c.RoutePrefix = string.Empty;
+        c.RoutePrefix = "swagger";
     });
 }
 
 app.UseHttpsRedirection();
-
 app.UseCors("AllowReact");
-
 app.UseAuthorization();
+
 app.MapControllers();
+
+app.MapGet("/", () => "Graph API is running! Visit /swagger for API documentation.");
 
 app.Run();
